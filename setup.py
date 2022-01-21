@@ -18,6 +18,9 @@ setup(
     url="https://github.com/trushad0w/clickhouse-migrate",
     author_email="xpen95@gmail.com",
     tests_require=["pytest==6.2.5", "pytest-mock==3.6.1", "pytest-cov==3.0.0"],
+    entry_points={
+        "console_scripts": ["clickhouse-migrate=clickhouse_migrate.manage:main"],
+    },
     test_suite="tests",
     license="MIT",
     license_file="LICENSE",

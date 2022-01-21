@@ -7,7 +7,7 @@ import pytest
 from clickhouse_migrate.common.db import execute
 from clickhouse_migrate.conf.settings import Settings
 from clickhouse_migrate.interfaces.service import MigrationService
-from clickhouse_migrate.scripts.main import migrate, create_migration
+from clickhouse_migrate.manage import migrate, create_migration
 from .conftest import CONFIG_PATH, delete_test_migration, create_changed_migration
 
 
