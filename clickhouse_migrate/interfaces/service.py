@@ -1,5 +1,6 @@
 import glob
 import importlib.util
+import logging
 import re
 from datetime import datetime, timezone
 from hashlib import md5
@@ -9,6 +10,8 @@ from typing import List
 from clickhouse_migrate.conf.settings import Settings
 from clickhouse_migrate.interfaces.repo import MigrationRepo
 from clickhouse_migrate.models.migration import Step, MigrationMeta
+
+logger = logging.getLogger(__name__)
 
 
 class MigrationService:
@@ -41,6 +44,7 @@ from clickhouse_migrate import Step
         )
         with open(file_name, "w") as f:
             f.write(cls.MIGRATION_TEMPLATE)
+        logging.info(f"Migration: {file_name} has been created")
 
     def apply_all_migrations(self):
         migration_path_list = self.get_migration_list()
@@ -52,7 +56,7 @@ from clickhouse_migrate import Step
         Get migration files from directory
         :return: List of migration files paths
         """
-        file_list = [file for file in glob.glob(f"{Settings().migration_dir}/*.py")]
+        file_list = [file for file in glob.glob(f"{Settings().migration_dir}/*.py") if self.datetime_re.match(file)]
         file_list.sort(key=lambda x: datetime.strptime(self.datetime_re.match(x).groups()[0], self.DATETIME_FORMAT))
         return file_list
 
@@ -67,7 +71,6 @@ from clickhouse_migrate import Step
         spec.loader.exec_module(migration_module)
 
         migration_list: List[Step] = migration_module.__getattribute__(self.MIGRATIONS_VARIABLE)
-
         for idx, migration in enumerate(migration_list):
             filename = self.get_filename(file_path=file_path)
             migration_meta = MigrationMeta(
@@ -77,6 +80,7 @@ from clickhouse_migrate import Step
             )
             if self.is_applied_migration(migration_meta):
                 continue
+            logger.info(f"Applying migration - {migration_meta.migration_id}")
             MigrationRepo.apply_migration(step=migration, migration_meta=migration_meta)
 
     def is_applied_migration(self, migration_meta: MigrationMeta) -> bool:

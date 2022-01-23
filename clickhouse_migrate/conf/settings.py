@@ -5,8 +5,7 @@ from os import path
 from clickhouse_migrate.common.exceptions.config import ConfigError
 from clickhouse_migrate.common.meta import Singleton
 
-CURRENT_DIR = path.abspath(path.dirname(__file__))
-CONFIG_PATH = path.join(CURRENT_DIR, "clickhouse_migrate.ini")
+CONFIG_PATH = path.join("./clickhouse_migrate.ini")
 
 
 class Settings(metaclass=Singleton):

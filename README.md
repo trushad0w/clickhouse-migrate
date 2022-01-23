@@ -1,4 +1,8 @@
 # ClickHouse Migrate
+[![codecov](https://codecov.io/gh/trushad0w/clickhouse-migrate/branch/master/graph/badge.svg?token=WSTIR7MOHG)](https://codecov.io/gh/trushad0w/clickhouse-migrate)
+
+[![PyPI version](https://badge.fury.io/py/clickhouse-migrate.svg)](https://badge.fury.io/py/clickhouse-migrate)
+
 
 Python library for applying migrations in ClickHouse database.
 
@@ -30,14 +34,15 @@ Configurator will search for this file by default.
 
 One can create a new migration via calling `clickhouse-migrate create_migration` command.
 
-Command parameters:
-```
---name <name of a new migration file> this is a required parameter 
+#### Command parameters:
 
---config <path to the created config file> this is an optional parameter, 
+`--name <name of a new migration file>` — this is a required parameter 
+
+`--config <path to the created config file>` — this is an optional parameter, 
 one may want to use it when the config file is not located in the root directory 
 or if its' name is different from default one
-```
+
+
 
 After calling the above-mentioned command a blank migration file `YYYY-MM-DD-HH-mm-ss_<migration_name>.py`
 will be created in the directory which was defined in the `*.ini` configuration file.
@@ -59,10 +64,11 @@ This rule does not apply in case there is only one connection string in `*.ini` 
 
 One can apply migrations created via `clickhouse-migrate create_migration` command by calling `clickhouse-migrate migrate`.
 
-Command parameters:
-```
---config <path to the created config file> this is an optional parameter, 
+#### Command parameters:
+`--config <path to the created config file>` — this is an optional parameter, 
 one may want to use it when the config file is not located in the root directory 
 or if its' name is different from default one
-```
+
+
+
 After calling this command all changes from migration files will be applied step-by-step. Changes are stored in `clickhouse_migrate` table.

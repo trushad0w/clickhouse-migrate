@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  clickhouse-server:
+    image: "yandex/clickhouse-server:21.12.3.32"
+    container_name: test-clickhouse-server
+    ports:
+      - "127.0.0.1:9000:9000"
