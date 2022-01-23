@@ -5,4 +5,4 @@ __all__ = [
 from clickhouse_migrate.models.migration import Step
 
 
-__version__ = "0.0.1b"
+__version__ = "0.0.2"

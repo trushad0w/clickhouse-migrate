@@ -1,10 +1,16 @@
 # ClickHouse Migrate
 [![codecov](https://codecov.io/gh/trushad0w/clickhouse-migrate/branch/master/graph/badge.svg?token=WSTIR7MOHG)](https://codecov.io/gh/trushad0w/clickhouse-migrate)
-
 [![PyPI version](https://badge.fury.io/py/clickhouse-migrate.svg)](https://badge.fury.io/py/clickhouse-migrate)
 
 
 Python library for applying migrations in ClickHouse database.
+
+## Installation
+
+Installation via PyPi:
+```shell
+pip install clickhouse-migrate
+```
 
 ## Configuration
 
