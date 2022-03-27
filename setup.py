@@ -12,7 +12,7 @@ setup(
     version="0.0.2",
     description="Migration library for Clickhouse",
     author="trushad0w",
-    install_requires=["click>=8.0.3", "clickhouse_driver>=0.2.2"],
+    install_requires=["click>=8.0.3", "clickhouse_driver>=0.2.2", "envparse==0.2.0 "],
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/trushad0w/clickhouse-migrate",
