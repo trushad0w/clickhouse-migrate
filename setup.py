@@ -9,7 +9,7 @@ with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
 setup(
     name="clickhouse-migrate",
     packages=find_packages(),
-    version="0.0.2",
+    version="0.0.3",
     description="Migration library for Clickhouse",
     author="trushad0w",
     install_requires=["click>=8.0.3", "clickhouse_driver>=0.2.2", "envparse==0.2.0 "],

@@ -14,7 +14,8 @@ pip install clickhouse-migrate
 
 ## Configuration
 
-To configure and `clickhouse-migrate` we can create a `*.ini` configuration file with the following content
+### .ini file
+To configure and use `clickhouse-migrate` we can create a `*.ini` configuration file with the following content
 
 ```ini
 [databases]
@@ -34,6 +35,20 @@ directory = "./migrations"
 Default name that is used by `clickhouse-migrate` library is `clickhouse_migrate.ini`
 Configurator will search for this file by default.
 
+### Environment variables
+Another configuration option is to use environment variables
+```shell
+
+CLICKHOUSE_MIGRATE_DATABASES='["<connection_string_1>", ... ,"<connection_string_n>"]'
+CLICKHOUSE_MIGRATE_DIRECTORY=<path to directory with migrations files>
+
+```
+
+### Command line arguments
+If the above mentioned methods is also not applicable for the project, one can use command line arguments
+`-db` / `--databases` —  Databases list
+`-dir` / `--migration_dir` — Migrations directory
+
 ## Usage
 
 ### Create migration file
@@ -42,13 +57,24 @@ One can create a new migration via calling `clickhouse-migrate create_migration`
 
 #### Command parameters:
 
-`--name <name of a new migration file>` — this is a required parameter 
+`-n` / `--name <name of a new migration file>` — this is a required parameter 
 
-`--config <path to the created config file>` — this is an optional parameter, 
+`-c` / `--config <path to the created config file>` — this is an optional parameter, 
 one may want to use it when the config file is not located in the root directory 
 or if its' name is different from default one
 
+`-db` / `--databases` — optional parameter for providing database connection strings
 
+`-dir` / `--migration_dir` — optional parameter for providing path to directory with migration files
+
+Example usage:
+```shell
+clickhouse-migrate create_migration -n test_migration -c /home/clickhouse-migrate/config/conf.ini
+```
+
+```shell
+clickhouse-migrate create_migration -n test_migration -dir /home/my_project/migrations -db clickhouse+native://default:@localhost:9000/db -db clickhouse+native://default:@localhost:9001/db
+```
 
 After calling the above-mentioned command a blank migration file `YYYY-MM-DD-HH-mm-ss_<migration_name>.py`
 will be created in the directory which was defined in the `*.ini` configuration file.
@@ -75,6 +101,17 @@ One can apply migrations created via `clickhouse-migrate create_migration` comma
 one may want to use it when the config file is not located in the root directory 
 or if its' name is different from default one
 
+`-db` / `--databases` — optional parameter for providing database connection strings
 
+`-dir` / `--migration_dir` — optional parameter for providing path to directory with migration files
+
+Example usage:
+```shell
+clickhouse-migrate migrate -c /home/clickhouse-migrate/config/conf.ini
+```
+
+```shell
+clickhouse-migrate migrate -dir /home/my_project/migrations -db clickhouse+native://default:@localhost:9000/db
+```
 
 After calling this command all changes from migration files will be applied step-by-step. Changes are stored in `clickhouse_migrate` table.
