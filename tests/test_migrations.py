@@ -13,9 +13,15 @@ from tests.conftest import CONFIG_PATH, create_changed_migration
 
 def test_create_migration(runner):
     filename = "test_migration"
-    result = runner.invoke(create_migration, ["--name", filename, "--config", CONFIG_PATH])
-    assert result.exit_code == 0, f"Create migration command exited unsuccessfully: {result.exc_info}"
-    file_list = [file for file in glob.glob(f"{Settings().migration_dir}/*{filename}*.py")]
+    result = runner.invoke(
+        create_migration, ["--name", filename, "--config", CONFIG_PATH]
+    )
+    assert (
+        result.exit_code == 0
+    ), f"Create migration command exited unsuccessfully: {result.exc_info}"
+    file_list = [
+        file for file in glob.glob(f"{Settings().migration_dir}/*{filename}*.py")
+    ]
     assert len(file_list) > 0, "No migrations were found"
 
     path = Path(file_list[0])
@@ -30,7 +36,9 @@ def test_apply_initial_step():
 
 
 def test_apply_migrations(runner):
-    expected_result = set([f"2022-01-19-14-25-17_init_migration_{idx}" for idx in range(2)])
+    expected_result = set(
+        [f"2022-01-19-14-25-17_init_migration_{idx}" for idx in range(2)]
+    )
     result = runner.invoke(migrate, ["--config", CONFIG_PATH])
     assert result.exit_code == 0, f"Command exited unsuccessfully: {result.exc_info}"
     query = "select * from clickhouse_migrate"

@@ -24,9 +24,13 @@ from clickhouse_migrate import Step
     DATETIME_FORMAT = "%Y-%m-%d-%H-%M-%S"
 
     def __init__(self):
-        self.datetime_re = re.compile(rf"{Settings().migration_dir}/([0-9]{{4}}(-[0-9]{{2}}){{5}})_.*")
+        self.datetime_re = re.compile(
+            rf"{Settings().migration_dir}/([0-9]{{4}}(-[0-9]{{2}}){{5}})_.*"
+        )
         migration_meta_list = MigrationRepo.get_applied_migrations()
-        self.applied_migration_map = {meta.migration_id: meta.migration_hash for meta in migration_meta_list}
+        self.applied_migration_map = {
+            meta.migration_id: meta.migration_hash for meta in migration_meta_list
+        }
 
     @staticmethod
     def apply_initial_step():
@@ -39,9 +43,7 @@ from clickhouse_migrate import Step
         :param name:
         :return:
         """
-        file_name = (
-            f"{Settings().migration_dir}/{datetime.now(tz=timezone.utc).strftime(cls.DATETIME_FORMAT)}_{name}.py"
-        )
+        file_name = f"{Settings().migration_dir}/{datetime.now(tz=timezone.utc).strftime(cls.DATETIME_FORMAT)}_{name}.py"
         with open(file_name, "w") as f:
             f.write(cls.MIGRATION_TEMPLATE)
         logging.info(f"Migration: {file_name} has been created")
@@ -56,8 +58,16 @@ from clickhouse_migrate import Step
         Get migration files from directory
         :return: List of migration files paths
         """
-        file_list = [file for file in glob.glob(f"{Settings().migration_dir}/*.py") if self.datetime_re.match(file)]
-        file_list.sort(key=lambda x: datetime.strptime(self.datetime_re.match(x).groups()[0], self.DATETIME_FORMAT))
+        file_list = [
+            file
+            for file in glob.glob(f"{Settings().migration_dir}/*.py")
+            if self.datetime_re.match(file)
+        ]
+        file_list.sort(
+            key=lambda x: datetime.strptime(
+                self.datetime_re.match(x).groups()[0], self.DATETIME_FORMAT
+            )
+        )
         return file_list
 
     def __apply_migrations_for_db(self, file_path: str):
@@ -66,16 +76,22 @@ from clickhouse_migrate import Step
         and apply each step by executing sql statement defined in it
         :param file_path: path to a migration
         """
-        spec = importlib.util.spec_from_file_location(self.MIGRATIONS_VARIABLE, file_path)
+        spec = importlib.util.spec_from_file_location(
+            self.MIGRATIONS_VARIABLE, file_path
+        )
         migration_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(migration_module)
 
-        migration_list: List[Step] = migration_module.__getattribute__(self.MIGRATIONS_VARIABLE)
+        migration_list: List[Step] = migration_module.__getattribute__(
+            self.MIGRATIONS_VARIABLE
+        )
         for idx, migration in enumerate(migration_list):
             filename = self.get_filename(file_path=file_path)
             migration_meta = MigrationMeta(
                 migration_id=f"{filename}_{idx}",
-                migration_hash=md5(re.sub(r"\s+", "", migration.sql).encode("utf8")).hexdigest(),
+                migration_hash=md5(
+                    re.sub(r"\s+", "", migration.sql).encode("utf8")
+                ).hexdigest(),
                 filename=filename,
             )
             if self.is_applied_migration(migration_meta):
@@ -85,8 +101,13 @@ from clickhouse_migrate import Step
 
     def is_applied_migration(self, migration_meta: MigrationMeta) -> bool:
         if self.applied_migration_map.get(migration_meta.migration_id):
-            if self.applied_migration_map[migration_meta.migration_id] != migration_meta.migration_hash:
-                raise ValueError(f"Migration content changed in the already applied file: {migration_meta.filename}")
+            if (
+                self.applied_migration_map[migration_meta.migration_id]
+                != migration_meta.migration_hash
+            ):
+                raise ValueError(
+                    f"Migration content changed in the already applied file: {migration_meta.filename}"
+                )
             return True
         return False
 

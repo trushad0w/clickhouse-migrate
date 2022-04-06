@@ -50,6 +50,8 @@ class MigrationRepo:
             select migration_id, migration_hash, filename from clickhouse_migrate
         """
         return [
-            MigrationMeta(migration_id=record[0], migration_hash=record[1], filename=record[2])
+            MigrationMeta(
+                migration_id=record[0], migration_hash=record[1], filename=record[2]
+            )
             for record in execute(query=query)
         ]

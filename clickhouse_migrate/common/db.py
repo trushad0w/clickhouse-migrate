@@ -34,7 +34,9 @@ class DbRegister(metaclass=Singleton):
         try:
             return self._pool[self.POOL_DEFAULT_NAME]
         except KeyError:
-            logger.error(f"""Selected pool_name {self.POOL_DEFAULT_NAME} is not present in the register""")
+            logger.error(
+                f"""Selected pool_name {self.POOL_DEFAULT_NAME} is not present in the register"""
+            )
             raise UnknownInstanceError
 
 
