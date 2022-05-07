@@ -10,3 +10,8 @@ class Singleton(type):
             cls.__instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
 
         return cls.__instances[cls]
+
+    def drop_object(cls):
+        if cls in cls.__instances:
+            object_to_drop = cls.__instances.pop(cls)
+            del object_to_drop
