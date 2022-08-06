@@ -31,7 +31,5 @@ class BaseDto:
             else:
                 field_value = None
             fields_values[field.name] = field_value
-        input_data = {
-            key: value for key, value in dict(data).items() if key in fields_values
-        }
+        input_data = {key: value for key, value in dict(data).items() if key in fields_values}
         return cls(**{**fields_values, **input_data})

@@ -19,13 +19,15 @@ jobs:
 
     - name: Install requirements
       run: |
-        pip install -r test_requirements
+        pip install ".[dev,tests]"
         python setup.py develop
 
     - name: Start ClickHouse server and client containers
       run: docker-compose -f tests/docker-compose.yml up -d
 
     - name: Generate Report
+      env:
+        CLICKHOUSE_MIGRATE_DATABASE: clickhouse+native://default:@localhost:9000/clickhouse_migrate_pytest
       run: |
         pip install pytest-cov
         pytest --cov=./ --cov-report=xml

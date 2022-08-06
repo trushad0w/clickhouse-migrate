@@ -1,0 +1,69 @@
+[build-system]
+requires = ["setuptools>=57.0.0", "setuptools-scm>=6.4.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "clickhouse-migrate"
+description = "Migration library for Clickhouse"
+readme = "README.md"
+keywords = ["clickhouse",  "databases", "migrations", "data science"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: SQL",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Database",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+requires-python = ">=3.7"
+
+license = {file = "LICENSE"}
+authors = [
+    {name = "Pavel Trunov", email="xpen95@gmail.com"}
+]
+
+dependencies = [
+    "click>=8.0.3",
+    "clickhouse_driver>=0.2.2",
+    "envparse==0.2.0",
+    'importlib-metadata; python_version>="3.7"',
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+dev = [
+    "isort==5.10.1",
+    "black==22.3.0",
+    "pre-commit>=2.17.0",
+    "flake8==4.0.1",
+]
+tests = [
+    "pytest==6.2.5",
+    "pytest-mock==3.6.1",
+    "pytest-cov==3.0.0",
+]
+
+[project.urls]
+homepage = "https://github.com/trushad0w/clickhouse-migrate"
+documentation = "https://github.com/trushad0w/clickhouse-migrate"
+repository = "https://github.com/trushad0w/clickhouse-migrate"
+
+[project.scripts]
+clickhouse-migrate = "clickhouse_migrate.manage:main"
+
+[tool.setuptools.dynamic]
+version = {attr = "clickhouse_migrate.VERSION"}
+
+[tool.setuptools]
+packages = ["clickhouse_migrate"]
