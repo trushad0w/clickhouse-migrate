@@ -1,4 +1,2 @@
 ignore:
-  - "*/conf/settings.py"
   - "*/tests/*"
-  - "setup.py"

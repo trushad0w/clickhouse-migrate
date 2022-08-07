@@ -18,9 +18,7 @@ jobs:
         python-version: 3.9
 
     - name: Install requirements
-      run: |
-        pip install ".[dev,tests]"
-        python setup.py develop
+      run: pip install ".[dev,tests]"
 
     - name: Start ClickHouse server and client containers
       run: docker-compose -f tests/docker-compose.yml up -d
