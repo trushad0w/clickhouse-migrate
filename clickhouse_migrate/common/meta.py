@@ -10,3 +10,6 @@ class Singleton(type):
             cls.__instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
 
         return cls.__instances[cls]
+
+    def dispose(cls):
+        cls.__instances.pop(cls, None)
