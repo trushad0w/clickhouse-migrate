@@ -66,5 +66,5 @@ def test_apply_changed_migration():
         ("select on, cluster from test", False),
     ),
 )
-def test_sql_split(query: str, expected_result: bool):
+def test_is_on_cluster(query: str, expected_result: bool):
     assert MigrationService.is_on_cluster(sql=query) == expected_result

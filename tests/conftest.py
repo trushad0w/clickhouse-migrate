@@ -1,4 +1,4 @@
-from os import mkdir, path
+from os import environ, mkdir, path
 from shutil import rmtree
 from urllib.parse import urlparse
 
@@ -60,3 +60,21 @@ def create_changed_migration():
     mkdir(MIGRATION_DIR)
     with open(MIGRATION_FILE_PATH, "w") as migration_file:
         migration_file.write(content)
+
+
+@pytest.fixture()
+def reset_env():
+    databases = environ.get(Settings.DATABASES_ENV_VAR)
+    migration_dir = environ.get(Settings.DIRECTORY_ENV_VAR)
+
+    yield
+
+    if databases:
+        environ[Settings.DATABASES_ENV_VAR] = databases
+    else:
+        environ.pop(Settings.DATABASES_ENV_VAR)
+
+    if migration_dir:
+        environ[Settings.DIRECTORY_ENV_VAR] = migration_dir
+    else:
+        environ.pop(Settings.DIRECTORY_ENV_VAR)

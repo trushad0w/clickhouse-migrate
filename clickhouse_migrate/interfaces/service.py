@@ -33,7 +33,7 @@ from clickhouse_migrate import Step
     def create_new_migration(cls, name: str):
         """
         Create blank migration with the provided name and current timestamp
-        :param name:
+        :param name: migration name
         :return:
         """
 
