@@ -25,7 +25,8 @@ jobs:
 
     - name: Generate Report
       env:
-        CLICKHOUSE_MIGRATE_DATABASE: clickhouse+native://default:@localhost:9000/clickhouse_migrate_pytest
+        CLICKHOUSE_MIGRATE_DATABASES: clickhouse+native://default:@localhost:9000/clickhouse_migrate_pytest
       run: pytest --cov=./ --cov-report=xml
+
     - name: Upload Coverage to Codecov
       uses: codecov/codecov-action@v2
