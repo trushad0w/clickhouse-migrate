@@ -1,17 +1,30 @@
 from typing import List
 
-from clickhouse_migrate.common.db import execute, execute_for_replicas
+from clickhouse_migrate.common.db import execute
 from clickhouse_migrate.models.migration import MigrationMeta
+from conf.settings import Settings
 
 
 class MigrationRepo:
+    @classmethod
+    def init_migration_table(cls) -> None:
+        """
+        Migration initialization, creates table to track the history of applied migrations
+        :return: None
+        """
+        if Settings().is_in_cluster:
+            cls.init_migration_table_on_cluster()
+        else:
+            cls.init_migration_table_single_node()
+
     @staticmethod
-    def init_migration_table():
+    def init_migration_table_single_node() -> None:
         """
         Method for migration initialization
-        It creates table to store info about applied migrations
+        It creates table to store info about applied migrations in a single node clickhouse instance
+        :return: None
         """
-        execute_for_replicas(
+        execute(
             """
                 create table if not exists clickhouse_migrate (
                     migration_id String,
@@ -23,19 +36,36 @@ class MigrationRepo:
             """
         )
 
+    @staticmethod
+    def init_migration_table_on_cluster() -> None:
+        """
+        Method for migration initialization
+        It creates table to store info about applied migrations in a clustered clickhouse instance
+        :return: None
+        """
+        execute(
+            """
+                create table if not exists clickhouse_migrate on cluster %(cluster_name)s (
+                        migration_id String,
+                        migration_hash String,
+                        filename String,
+                        applyed_at DateTime default now()
+                    )
+                engine = ReplicatedMergeTree('/clickhouse/tables/{shard}/{database}/clickhouse_migrate', '{replica}')
+                order by tuple(applyed_at); 
+            """,
+            params={"cluster_name": Settings().cluster_name},
+        )
+
     @classmethod
-    def apply_migration(cls, sql: str, replicated: bool, migration_meta: MigrationMeta):
+    def apply_migration(cls, sql: str, migration_meta: MigrationMeta) -> None:
         """
         Apply migration for several replicas or for only one db
         :param sql: Migration step sql that should be applied
-        :param replicated: Boolean parameter which indicates if the provided sql should be executed
-        on each of the provided datrabase instances or not
+        on each of the provided database instances or not
         :param migration_meta: Meta that has to be written to the migrate table
         """
-        if replicated:
-            execute_for_replicas(query=sql)
-        else:
-            execute(query=sql)
+        execute(query=sql)
         cls.insert_applied_migration_version(migration_meta=migration_meta)
 
     @staticmethod
@@ -44,7 +74,7 @@ class MigrationRepo:
             insert into clickhouse_migrate (migration_id, migration_hash, filename)
             values (%(migration_id)s, %(migration_hash)s, %(filename)s)
         """
-        execute_for_replicas(query=query, params=migration_meta.asdict())
+        execute(query=query, params=migration_meta.asdict())
 
     @staticmethod
     def get_applied_migrations() -> List[MigrationMeta]:

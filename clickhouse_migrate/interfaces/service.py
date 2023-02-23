@@ -65,6 +65,7 @@ from clickhouse_migrate import Step
         :param file_path: path to a migration
         """
         spec = importlib.util.spec_from_file_location(self.MIGRATIONS_VARIABLE, file_path)
+
         migration_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(migration_module)
 
@@ -81,33 +82,13 @@ from clickhouse_migrate import Step
 
             print(f"Applying migration - {migration_meta.migration_id}")
 
-            replicated = migration.replicated
-            if self.is_on_cluster(sql=migration.sql):
-                replicated = False
-
-            MigrationRepo.apply_migration(sql=migration.sql, replicated=replicated, migration_meta=migration_meta)
+            MigrationRepo.apply_migration(sql=migration.sql, migration_meta=migration_meta)
 
     def is_applied_migration(self, migration_meta: MigrationMeta) -> bool:
         if self.applied_migration_map.get(migration_meta.migration_id):
             if self.applied_migration_map[migration_meta.migration_id] != migration_meta.migration_hash:
                 raise ValueError(f"Migration content changed in the already applied file: {migration_meta.filename}")
             return True
-        return False
-
-    @staticmethod
-    def is_on_cluster(sql: str) -> bool:
-        """
-        Check if current sql query contains 'ON CLUSTER' keyword
-        :param sql: query to check
-        :returns: boolean
-        """
-        last_on_idx = -2
-        for idx, item in enumerate(sql.split()):
-            if item.lower() == "on":
-                last_on_idx = idx
-            if item.lower() == "cluster" and last_on_idx + 1 == idx:
-                return True
-
         return False
 
     @staticmethod

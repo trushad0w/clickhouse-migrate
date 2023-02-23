@@ -10,5 +10,5 @@ def check_migrations_dir():
 
 
 def check_databases():
-    if Settings().databases is None:
+    if Settings().conn_str is None:
         raise ConfigError("Databases were not provided")

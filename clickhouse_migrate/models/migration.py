@@ -6,7 +6,6 @@ from clickhouse_migrate.common.models.base import BaseDto
 @dataclass(frozen=True)
 class Step:
     sql: str
-    replicated: bool = True
 
 
 @dataclass

@@ -29,8 +29,8 @@ def runner():
 @pytest.fixture(autouse=True)
 def setup_for_tests():
     Settings().init_config()
-    if Settings().databases:
-        db_url = urlparse(Settings().databases[0])
+    if Settings().conn_str:
+        db_url = urlparse(Settings().conn_str[0])
         db_name = db_url.path.replace("/", "")
         db_host = f"{db_url.scheme}://{db_url.netloc}"
         connection = connect(db_host)
